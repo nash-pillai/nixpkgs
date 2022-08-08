@@ -177,31 +177,25 @@ assert buildTargetLlvmPackages.llvm == llvmPackages.llvm;
 assert stdenv.targetPlatform.isDarwin -> buildTargetLlvmPackages.clang == llvmPackages.clang;
 
 stdenv.mkDerivation (rec {
-  version = "9.4.0.20220721";
+  version = "9.4.1";
   pname = "${targetPrefix}ghc${variantSuffix}";
 
   src = fetchurl {
-    url = "https://downloads.haskell.org/ghc/9.4.1-rc1/ghc-${version}-src.tar.xz";
-    sha256 = "bca8c52f76d8747a66291181de2de7bdf9ff80093808fe39bf5cbff0f116c426";
+    url = "https://downloads.haskell.org/ghc/${version}/ghc-${version}-src.tar.xz";
+    sha256 = "sha256-y/7UZAvfAl4zulVDPa+M32mPTgSZrnqADd5EqC5zluM=";
   };
 
   enableParallelBuilding = true;
 
   outputs = [ "out" "doc" ];
 
+
   patches = [
-    # fix hyperlinked haddock sources: https://github.com/haskell/haddock/pull/1482
+    # add missing profiling targets in make build system
     (fetchpatch {
-      url = "https://patch-diff.githubusercontent.com/raw/haskell/haddock/pull/1482.patch";
-      sha256 = "sha256-8w8QUCsODaTvknCDGgTfFNZa8ZmvIKaKS+2ZJZ9foYk=";
-      extraPrefix = "utils/haddock/";
-      stripLen = 1;
-    })
-    # fix race condition in make build system
-    (fetchpatch {
-      name = "ghc-hs-boot-copying-fix.patch";
-      url = "https://gitlab.haskell.org/ghc/ghc/-/commit/4f17eff0cbd125eca55b68f4927befdd45008eb6.diff";
-      sha256 = "0anq3w9z9mhxb0wx6rvxac3n7rl3apcma9zk3r9zz9hj9v7vkqzx";
+      name = "ghc-fix-bootstraping-with-profiling.patch";
+      url = "https://gitlab.haskell.org/ghc/ghc/-/commit/47b4fea08bd0ef1476b8d134c7baf06157fe5fa5.diff";
+      sha256 = "sha256-oYQWg9cK0RNL9I+kap8KER+iiKim73zG6URQs8BeAXU=";
     })
   ];
 
